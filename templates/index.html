@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Catalog · PageTurn Library{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="hero-copy"><p class="eyebrow">YOUR NEXT CHAPTER STARTS HERE</p><h1>Find a book.<br><em>Find a new world.</em></h1><p class="hero-sub">Explore the collection, discover your next favorite, and request books from one simple place.</p>
+    <form class="searchbar" method="get" action="{{ url_for('index') }}"><input name="q" value="{{ q }}" placeholder="Search title, author, or ISBN..." aria-label="Search books"><select name="category"><option value="">All categories</option>{% for c in categories %}<option value="{{ c.category }}" {% if selected_category == c.category %}selected{% endif %}>{{ c.category }}</option>{% endfor %}</select><button class="button" type="submit">Search</button></form>
+  </div>
+  <div class="hero-art"><div class="sun"></div><div class="book-stack"><div class="book book-one"><span>THE ART<br>OF READING</span></div><div class="book book-two"><span>OPEN<br>YOUR MIND</span></div><div class="book book-three"><span>NEW<br>CHAPTERS</span></div></div><div class="art-caption">READ MORE. KNOW MORE.</div></div>
+</section>
+<section class="section-head"><div><p class="eyebrow">THE COLLECTION</p><h2>Browse the library</h2></div><span class="muted">{{ books|length }} book{% if books|length != 1 %}s{% endif %} found</span></section>
+{% if books %}
+<div class="book-grid">
+{% for book in books %}
+  <article class="book-card"><div class="cover cover-{{ loop.index0 % 5 }}"><span class="cover-label">{{ book.category }}</span><div class="cover-title">{{ book.title }}</div><div class="cover-author">{{ book.author }}</div><div class="cover-lines"></div></div>
+    <div class="book-info"><p class="category">{{ book.category }}</p><h3><a href="{{ url_for('book_detail', book_id=book.id) }}">{{ book.title }}</a></h3><p class="author">by {{ book.author }}</p><div class="card-bottom"><span class="availability {% if book.available_copies < 1 %}unavailable{% endif %}">{% if book.available_copies > 0 %}{{ book.available_copies }} available{% else %}Currently unavailable{% endif %}</span><a class="text-link" href="{{ url_for('book_detail', book_id=book.id) }}">Details ↗</a></div></div>
+  </article>
+{% endfor %}
+</div>
+{% else %}<div class="empty"><h3>No books match that search.</h3><p>Try a different title, author, or category.</p><a class="button" href="{{ url_for('index') }}">Clear search</a></div>{% endif %}
+{% endblock %}

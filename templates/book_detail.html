@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}{{ book.title }} · PageTurn Library{% endblock %}
+{% block content %}
+<div class="breadcrumb"><a href="{{ url_for('index') }}">Catalog</a> / {{ book.title }}</div>
+<section class="detail-layout"><div class="detail-cover cover-{{ book.id % 5 }}"><span class="cover-label">{{ book.category }}</span><div class="cover-title">{{ book.title }}</div><div class="cover-author">{{ book.author }}</div><div class="cover-lines"></div></div>
+<div class="detail-copy"><p class="eyebrow">BOOK DETAILS</p><h1>{{ book.title }}</h1><p class="detail-author">Written by <strong>{{ book.author }}</strong></p><span class="pill">{{ book.category }}</span><p class="description">{{ book.description or "No description has been added for this title yet." }}</p><div class="detail-meta"><div><small>ISBN</small><strong>{{ book.isbn or "Not listed" }}</strong></div><div><small>Copies available</small><strong>{{ book.available_copies }} of {{ book.total_copies }}</strong></div></div>
+{% if book.available_copies > 0 %}{% if current_user %}<form method="post" action="{{ url_for('borrow_book', book_id=book.id) }}"><button class="button" type="submit">Request to borrow →</button></form>{% else %}<a class="button" href="{{ url_for('login') }}">Sign in to borrow →</a>{% endif %}{% else %}<button class="button disabled" disabled>Currently unavailable</button>{% endif %}
+</div></section>
+{% endblock %}
