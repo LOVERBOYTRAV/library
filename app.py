@@ -310,9 +310,28 @@ def create_admin_command():
                  (username, email, generate_password_hash(password)), fetch=False)
     print(f"Admin account ready. Sign in with email: {email}")
 
-# Initialize tables and sample catalog for local runs and Render startup.
+def ensure_admin_from_env():
+    """Create/update the deployment admin only when credentials are configured."""
+    username = os.getenv("ADMIN_USERNAME", "").strip()
+    password = os.getenv("ADMIN_PASSWORD", "")
+    if not username or not password:
+        return
+    if len(password) < 8:
+        print("ADMIN_PASSWORD must be at least 8 characters; admin setup skipped.")
+        return
+    email = username.lower() if "@" in username else f"{username.lower()}@library.local"
+    existing = query_db("SELECT id FROM users WHERE email=?", (email,))
+    if existing:
+        query_db("UPDATE users SET name=?, password_hash=?, role='admin' WHERE id=?",
+                 (username, generate_password_hash(password), existing[0]["id"]), fetch=False)
+    else:
+        query_db("INSERT INTO users (name,email,password_hash,role) VALUES (?,?,?, 'admin')",
+                 (username, email, generate_password_hash(password)), fetch=False)
+
+# Initialize tables, sample catalog, and optional Render admin on startup.
 try:
     init_db()
+    ensure_admin_from_env()
 except Exception as exc:
     # Keep import/startup error visible in logs; health endpoint remains simple.
     print(f"Database initialization warning: {exc}")

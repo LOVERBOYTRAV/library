@@ -51,7 +51,10 @@ The admin email is the value of `ADMIN_USERNAME` if it contains `@`, otherwise i
 2. In Render choose **New + → Blueprint** and connect the repository, or create a Web Service manually.
 3. The included `render.yaml` uses `gunicorn app:app`; there is no external database service to create.
 4. Set a strong `ADMIN_PASSWORD` and a unique `SECRET_KEY` in Render environment settings. The blueprint generates `SECRET_KEY` automatically.
-5. Deploy. The sample catalog is initialized at startup.
+5. In Render, enter a strong password (at least 8 characters) for `ADMIN_PASSWORD`. The app creates/updates the admin account on startup.
+6. Deploy. The sample catalog is initialized at startup.
+
+Sign in as admin using `ADMIN_USERNAME` as the email if it contains `@`. Otherwise, the email is `<ADMIN_USERNAME>@library.local`.
 
 ### Important note about SQLite on Render
 A regular Render web service has an ephemeral filesystem. This means `library.db` and any new books, accounts, and borrowing records **can be lost when the service restarts, redeploys, or the instance is replaced**. This version is ideal for demos/class projects where avoiding an external database is the priority. If you need the data to persist, attach a Render persistent disk and set `DATABASE_PATH` to a path on that disk (for example `/var/data/library.db`); persistent disks may require a paid service plan. Do not store important production data in the default ephemeral location.
