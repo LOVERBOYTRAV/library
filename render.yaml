@@ -1,18 +1,8 @@
 services:
   - type: web
-    name: pageturn-library
+    name: library-management-system
     runtime: python
+    plan: free
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn app:app
     healthCheckPath: /health
-    envVars:
-      - key: PYTHON_VERSION
-        value: 3.12.7
-      - key: SECRET_KEY
-        generateValue: true
-      - key: DATABASE_PATH
-        value: /opt/render/project/src/library.db
-      - key: ADMIN_USERNAME
-        value: admin
-      - key: ADMIN_PASSWORD
-        sync: false
